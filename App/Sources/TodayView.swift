@@ -157,6 +157,19 @@ struct TodayView: View {
             Button(wrote ? "もう一句、詠む" : "この季語で詠む") { compose = ComposeRequest(kigo: kigo) }
                 .buttonStyle(PrimaryButtonStyle())
                 .haptic(.selection, trigger: compose?.id)
+            if store.verses.isEmpty {
+                // はじめての一句の案内（句帳が空のあいだだけ）
+                HStack(alignment: .top, spacing: Space.s) {
+                    Text("初").font(Typeset.title(13)).foregroundStyle(.white)
+                        .frame(width: 22, height: 22)
+                        .background(palette.deep, in: Circle())
+                    Text("はじめての一句は、散歩のお題で見つけたものを一つ、季語と並べるだけ。「\(kigo.word)や」で始めると五音がそろいます。")
+                        .font(Typeset.small).foregroundStyle(Ink.text)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(Space.m)
+                .background(palette.soft.opacity(0.6), in: RoundedRectangle(cornerRadius: Radius.button, style: .continuous))
+            }
         }
     }
 
@@ -272,7 +285,7 @@ struct SavedOverlay: View {
             Ink.ground.opacity(0.86).ignoresSafeArea()
             VStack(spacing: Space.l) {
                 TanzakuString()
-                Tanzaku(lines: verse.lines, width: 96)
+                Tanzaku(lines: verse.lines, width: 80)
                     .rotationEffect(.degrees(placed ? -3 : 0))
                     .offset(y: placed ? 0 : -24)
                     .liftShadow()

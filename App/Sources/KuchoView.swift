@@ -140,21 +140,29 @@ struct VerseDetailView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: Space.xl) {
-                    VStack(spacing: 0) {
-                        TanzakuString(length: 34)
-                        Tanzaku(lines: verse.lines, width: 132)
-                            .rotationEffect(.degrees(-1.5))
-                            .liftShadow()
-                    }
-                    VStack(spacing: Space.xs) {
-                        Text(verse.kou.name).font(Typeset.title(24)).kerning(-0.5).foregroundStyle(Ink.text)
-                        Text("\(verse.kou.reading)・\(verse.kou.sekki) \(verse.kou.phase)").font(Typeset.small).foregroundStyle(Ink.sub)
-                        Text(verse.date.formatted(.dateTime.year().month().day().weekday())).font(Typeset.small).foregroundStyle(Ink.sub)
-                        if !verse.kigo.isEmpty {
-                            Text("季語：\(verse.kigo.joined(separator: "・"))").font(Typeset.small).foregroundStyle(palette.deep)
-                                .padding(.top, Space.xs)
+                VStack(alignment: .leading, spacing: Space.xl) {
+                    HStack(alignment: .top, spacing: Space.xl) {
+                        VStack(spacing: 0) {
+                            TanzakuString(length: 24)
+                            Tanzaku(lines: verse.lines, width: 96)
+                                .rotationEffect(.degrees(-1.5))
+                                .liftShadow()
                         }
+                        VStack(alignment: .leading, spacing: Space.s) {
+                            Text(verse.kou.name).font(Typeset.title(26)).kerning(-0.8).foregroundStyle(Ink.text)
+                            Text(verse.kou.reading).font(Typeset.small).kerning(0.6).foregroundStyle(Ink.sub)
+                            Text("\(verse.kou.sekki)・\(verse.kou.phase)・\(verse.kou.meaning)").font(Typeset.small).foregroundStyle(Ink.sub)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Rectangle().fill(Ink.line).frame(height: 0.6).padding(.vertical, Space.xs)
+                            Text(verse.date.formatted(.dateTime.year().month().day().weekday())).font(Typeset.small).foregroundStyle(Ink.text)
+                            if !verse.kigo.isEmpty {
+                                Text("季語：\(verse.kigo.joined(separator: "・"))").font(Typeset.small).foregroundStyle(palette.deep)
+                            }
+                            Text(verse.lines.joined(separator: " ")).font(Typeset.title(17)).foregroundStyle(Ink.text)
+                                .padding(.top, Space.s)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(.top, Space.xxl)
                     }
                     HStack(spacing: Space.m) {
                         if let shareImage {
@@ -170,6 +178,7 @@ struct VerseDetailView: View {
                     }
                 }
                 .padding(Space.xl)
+                .frame(maxWidth: 640)
                 .frame(maxWidth: .infinity)
             }
             .background(Ink.ground)
