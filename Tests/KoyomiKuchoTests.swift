@@ -182,8 +182,10 @@ struct ClassicTests {
         var run = QuizRun(questions: QuizMaker.round(mode: .season, seed: 5))
         for i in 0..<QuizMaker.roundSize {
             let q = run.question!
-            #expect(run.answer(i == 4 ? "×" : q.answer) == (i != 4))
-            #expect(!run.answer(q.answer)) // 二度は答えられない
+            let first = run.answer(i == 4 ? "×" : q.answer)
+            #expect(first == (i != 4))
+            let again = run.answer(q.answer)
+            #expect(!again) // 二度は答えられない
             run.next()
         }
         #expect(run.isFinished)
