@@ -26,6 +26,17 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    let kou = Almanac.kou(on: .now, calendar: .current)
+                    HStack(spacing: Space.l) {
+                        KoyomiWheel(filled: [], current: kou.index, showsCenter: false).frame(width: 64)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("こよみ句帳").font(Typeset.title(20)).foregroundStyle(Ink.text)
+                            Text("いまは\(kou.sekki)・\(kou.phase)「\(kou.name)」").font(Typeset.small).foregroundStyle(Ink.sub)
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                }
                 Section("季節の色") {
                     swatchRow("auto", "自動（今は\(Almanac.kou(on: .now, calendar: .current).season.name)）", SeasonPalette.of(Almanac.kou(on: .now, calendar: .current).season))
                     ForEach(Season.allCases, id: \.rawValue) { s in
