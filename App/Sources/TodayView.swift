@@ -163,7 +163,7 @@ struct TodayView: View {
                     Text("初").font(Typeset.title(13)).foregroundStyle(.white)
                         .frame(width: 22, height: 22)
                         .background(palette.deep, in: Circle())
-                    Text("はじめての一句は、散歩のお題で見つけたものを一つ、季語と並べるだけ。「\(kigo.word)や」で始めると五音がそろいます。")
+                    Text("はじめての一句は、散歩のお題で見つけたものを一つ、季語と並べるだけ。季語「\(kigo.word)」を上五に置くと書きはじめやすくなります。")
                         .font(Typeset.small).foregroundStyle(Ink.text)
                         .fixedSize(horizontal: false, vertical: true)
                 }
