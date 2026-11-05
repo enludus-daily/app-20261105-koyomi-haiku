@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct DailyAppApp: App {
+struct KoyomiKuchoApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

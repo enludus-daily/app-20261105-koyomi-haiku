@@ -1,36 +1,39 @@
-# daily-app-template
+# こよみ句帳（app-20261105-koyomi-haiku）
 
-enludus-daily で毎日作る iOS アプリ（SwiftUI）のテンプレート。テンプレートから作ったリポジトリでは、この README をそのアプリの説明に書き換える。
+七十二候（約 5 日ごとに変わる、こよみの季節）と散歩のお題で、毎日一句。短冊の句帳と 72 の弧の「暦の輪」が、1 年かけて埋まっていく iOS アプリ（SwiftUI）。
 
-## 中身
+- **だれの**：季節を感じたい人、俳句を始めてみたいけれど「何を詠めばいいか」「季語が分からない」「続かない」人
+- **どう使う**：①今日の候と季語・散歩のお題を見る → ②短冊に五・七・五を書く（音の数・季語・季重なり・切れ字をその場で数える。Apple Intelligence が使えるときは推敲のヒントを 3 つ）→ ③句帳に納めると、暦の輪のその候が染まる。手本の句（芭蕉・蕪村・一茶・子規など 45 句）で「季語あて」「季節あて」も遊べる
+- **データ**：七十二候 72 件 × 季語 4 語 = 288 語（読み・散歩のお題つき）、古典の句 45 句。すべて端末の中。通信・アカウント・広告・解析なし
+- **iPhone Duo**：size class で並べ方を変える。内側の画面（regular 幅）では「今日」と「暦の輪」、「短冊」と「入力」を左右に並べる（Apple Tech Talk「Prepare your app for iPhone Duo」）
+- **Apple Intelligence**：Foundation Models（`SystemLanguageModel`）で句を読んでヒントを返す。句は書き換えない。使えない端末・設定・言語では理由を出し、決まりで作るヒントだけにする（`VerseAdvisor` プロトコルで差し替え、テストは偽物）。最低 iOS 26（Foundation Models が iOS 26 から）
 
-| パス | 役割 |
-|---|---|
-| `project.yml` | XcodeGen の spec。`.xcodeproj` はコミットしない |
-| `App/Sources/`, `Tests/` | ひな形のアプリとテスト（Swift Testing） |
-| `App/Resources/` | アイコン、アクセントカラー、`PrivacyInfo.xcprivacy` |
-| `.github/workflows/ci.yml` | push / PR で daily-actions の `ios-ci.yml` を呼ぶ（40 桁の SHA で固定） |
-| `.github/workflows/testflight.yml` | 手動（workflow_dispatch）で `ios-testflight.yml` を呼ぶ（アップロードのあと内部テストに配信） |
-| `.github/workflows/asc.yml` | 手動で `ios-asc.yml` を呼ぶ（App Store Connect に名前・説明などを入れる / 最新ビルドを配信） |
-| `docs/app-store.json`, `PRIVACY.md` | App Store Connect に入れる情報、プライバシーポリシー |
-| `scripts/pin-daily-actions.sh` | daily-actions の SHA を書き換える（整備用のセッションか本人だけ。自己 CI の成功を確かめる） |
-| `scripts/new-app.sh` | 名前・表示名・枠（Bundle ID）に書き換える |
-| `scripts/preflight-push.sh`, `.githooks/pre-push` | push の前の検査（秘密・個人情報）と1日の上限 |
-| `scripts/scan-sensitive.sh` | 検査の複製（正本は daily-actions/scan/。違うと CI が警告） |
-| `scripts/make-icon.py` | アイコンを作る（Pillow） |
-| `.claude/skills/` | dev-lifecycle / dev-judgment / dev-workflow（naki0227/useful-map から取得） |
-| `CLAUDE.md`, `docs/daily-runbook.md` | 毎日のセッションの決まりと手順 |
-| `docs/app-store.md` | 審査の危険・本人がすることの記録 |
+## 作らなかったもの
+投稿・SNS・句会、写真、課金、AI が句を作る機能、ウィジェット（次の候補）、英語の画面（題材が日本語の俳句のため、初版は日本語だけ）
 
-## 手元（Mac）で開く
+## 世界観・トークン・手応え
 
-```sh
-brew install xcodegen   # CI は 2.46.0 で固定
-xcodegen generate
-open DailyApp.xcodeproj
-```
+**世界観**：このアプリでは〔短冊〕が〔句を書く欄と句帳の 1 枚〕に、〔七十二候のこよみ〕が〔72 の弧の暦の輪（1 年の積み上げ）〕になる。短冊は自作の Shape：上下の打曇り（雲の帯）、和紙の繊維（固定の乱数の Canvas）、穴と紐、縦書きの散らし書き（右に上五・中七、左に下五を下げて）。
 
-## 版
+**色**：アプリの色は 1 系統で、いまの季節の色（春 桜 `#F1BFCB`・夏 空 `#9EC3E2`・秋 柿 `#F4BBA4`・冬 藤 `#C9BFEA`、明度 0.75〜0.85）。各色に accent / soft / deep / 差し色。地 `#F3F6F9`、紙 `#FBFBF9`、文字 `#2E3A46`。`python3 scripts/tone-check.py` は exit 0（強い色 0 件）。ダークモードは、紙と墨の世界観のため light に固定。
 
-- Xcode 27.1（ランナー `xcode-27`。GitHub では Preview 扱い）、iOS 18.0 以降、iPhone だけ（iPhone Duo の内側の画面にも合わせる）、Swift 6
-- スキルの取得元：`naki0227/personal-knowledge`（Vault、private）の `templates/repo-bootstrap/.claude/skills/` を、本人の整備用セッションで写す（2026-11-05 に app-quality-bar を追加）
+**書体**：見出し・数字・句はセリフ（明朝）、本文はサンセリフ（Dynamic Type に追従）。大きな数字は字間を詰め、小さなラベルは 0.6 開ける。
+
+**手応えの表**
+
+| できごと | 動き | 振動 | 音 |
+|---|---|---|---|
+| 押す | ボタンが 0.97 倍（easeOut 0.15） | 選ぶ＝`.selection` | なし（散歩中・静かな場所で使うため） |
+| 1 つ成功（1 行が 5・7・5 ちょうど） | 音の点が埋まり「ちょうど」に変わる（spring 0.3） | `.impact(.light)` | なし |
+| まとめて成功（3 行ともちょうど） | 短冊の縁に季節の色の細い線（0.25 秒） | `.impact(.medium)` | なし |
+| 失敗（手本の句で外れ） | 短冊が 420ms 横に揺れる（0,-9,8,-6,5,-3,2,0） | `.error` | なし |
+| 正解・連続正解 | 短冊が 1.03 倍に弾む、「N 問つづけて」が数字の切り替えで増える | `.impact(.light)` | なし |
+| 完了（句帳に納めた） | 短冊が上から置かれ -3° 傾く、暦の数が増える（spring 0.45 / 0.85） | `.success` | なし |
+| 場面の切れ目（新しい候の日） | 「今日から、新しい候」と候の名の切り替え | なし（毎朝鳴らさない） | なし |
+
+動きを減らす設定では、揺れ・弾み・置かれる動きを止める。振動は設定で切れる。
+
+## 開発
+- ビルドとテストは GitHub Actions（`.github/workflows/ci.yml`、iPhone Duo のシミュレータ）。テストは `Tests/`（Swift Testing）
+- スクリーンショット：起動引数 `-screenshotScene <名前>`（launch onboarding today compose saved kucho detail quiz answered result settings empty）
+- 七十二候は略本暦にもとづく。候の始まる日は年によって 1 日ほど前後するので「ごろ」と書く
