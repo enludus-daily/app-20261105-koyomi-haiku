@@ -168,6 +168,12 @@ struct ClassicTests {
         }
     }
 
+    @Test func masksKigoThatSpansLines() {
+        let v = Classics.verses.first { $0.kigo == "親のない雀" }!
+        let q = QuizQuestion(verse: v, choices: [v.kigo], answer: v.kigo)
+        #expect(q.maskedLines == ["我と来て", "遊べや〇〇", "〇〇〇"])
+    }
+
     @Test func sameSeedGivesSameRound() {
         #expect(QuizMaker.round(mode: .kigo, seed: 42) == QuizMaker.round(mode: .kigo, seed: 42))
     }

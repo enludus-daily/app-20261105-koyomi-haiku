@@ -49,15 +49,20 @@ struct QuizQuestion: Identifiable, Hashable, Sendable {
     let answer: String
     var id: Int { verse.index }
 
-    /// 季語を伏せた句（季語あて）
+    /// 季語を伏せた句（季語あて）。行をまたぐ季語（「親の / ない雀」）も伏せる
     var maskedLines: [String] {
-        let mask = String(repeating: "〇", count: verse.kigo.count)
-        var done = false
-        return verse.lines.map { line in
-            guard !done, line.contains(verse.kigo) else { return line }
-            done = true
-            return line.replacingOccurrences(of: verse.kigo, with: mask)
+        var chars = Array(verse.text)
+        let kigo = Array(verse.kigo)
+        if let at = (0...max(0, chars.count - kigo.count)).first(where: { Array(chars[$0..<min(chars.count, $0 + kigo.count)]) == kigo }) {
+            for i in at..<(at + kigo.count) { chars[i] = "〇" }
         }
+        var out: [String] = []
+        var cursor = 0
+        for line in verse.lines {
+            out.append(String(chars[cursor..<(cursor + line.count)]))
+            cursor += line.count
+        }
+        return out
     }
 }
 
